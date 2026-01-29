@@ -64,7 +64,7 @@ These choices are intentionally lightweight and may evolve as the project mature
 
 ```bash
 sudo port install clang-20 cmake doxygen
-
+```
 ## Building
 
     mkdir .bld
