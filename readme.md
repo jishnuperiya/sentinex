@@ -1,60 +1,32 @@
-# STRL | Sensor Truth Replay Lab
+# Sentinex | State Estimation & Sensor Simulation Lab
 
-STRL is a minimal, deterministic dataflow framework for replaying recorded multi-sensor data and running controlled experiments on perception pipelines.
+Sentinex is a C++20 framework designed for the development and validation of multi-sensor state estimation algorithms. It integrates a modular Extended Kalman Filter (EKF) with a high-fidelity sensor simulation engine, enabling deterministic benchmarking of estimation accuracy against absolute "Ground Truth."
 
-The goal of STRL is to make timing, synchronization, calibration, and failure modes observable and reproducible — not to provide a full autonomy or robotics stack.
+The project serves as a laboratory for analyzing how various sensor noise profiles—including GPS-denied environments and IMU bias instability—impact the reliability of vehicle localization.
 
+## Key Features
 
-## Motivation
+- Deterministic Physics Simulation: A 2D vehicle kinematics engine that provides Ground Truth telemetry (Position, Heading, Velocity) as a baseline for accuracy assessment.
 
+- Stochastic Sensor Modeling:
 
-In production robotics, autonomous, and aerospace systems, many failures are caused by:
-- timestamp misalignment
-- latency accumulation
-- calibration drift
-- unobservable system interactions
+  - GPS: Models urban canyon effects through GPS-denied zones and configurable measurement error probabilities.
 
-These issues are difficult to analyze using live systems or simulation alone.
+  - Gyroscope: Implements bias instability and Gaussian white noise models to simulate real-world MEMS sensor drift.
 
-STRL provides a replay-based validation lab where recorded sensor data can be re-executed deterministically under controlled conditions.
+  - LiDAR: Generates range/bearing data from beacon maps, supporting configurable Data Association (DA).
 
-## What STRL is
+  - Performance Benchmarking: Real-time tracking of RMSE (Root Mean Square Error) to quantify the divergence between the filter's estimate and the simulated vehicle state.
 
-- Deterministic replay of recorded sensor data
-- Explicit time and synchronization model
-- ADTF-inspired, component-based dataflow
-- Controlled fault injection (latency, jitter, drops)
-- System-level validation and metrics
+## Project Structure
+The repository is organized to separate the simulation environment from the estimation logic, following professional software-in-the-loop (SiL) patterns:
+- sentinex-core: The estimation engine. Contains the EKF implementation, state-space transition logic, and matrix abstractions.
 
-## What STRL is not
+- sentinex-sim: The simulation environment. Contains the GPSSensor, GyroSensor, and LidarSensor classes responsible for "corrupting" truth data into realistic inputs.
 
-- Not a full autonomy stack
-- Not a ROS replacement
-- Not a simulator
-- Not focused on ML accuracy benchmarks
+- sentinex-test: Unit testing and experimentation harness.
 
-## Documentation
-
-- [White paper](docs/whitepaper.pdf)
-- Architecture overview (docs/architecture.md)
-
----
-
-## Project Layout
-
-The project is structured conservatively to allow the architecture to evolve without premature commitment to specific binaries or libraries:
-
-- **`strl-core`**  
-  Core library containing the dataflow framework, time model, and validation primitives.
-
-- **`strl-test`**  
-  Doctest-based test and experimentation harness linking against `strl-core`.  
-  Includes a rich command-line interface and property-based testing via RapidCheck.
-
-- **`strl-cli`**  
-  Reference executable demonstrating replay, configuration, and inspection workflows.
-
-These choices are intentionally lightweight and may evolve as the project matures.
+- sentinex-cli: Reference executable for running simulation scenarios and inspecting telemetry output.
 
 ---
 
@@ -82,25 +54,12 @@ to see a list of possible of build targets.
 
 Run the test and experimentation harness:
 
-    ./srtl-test
+    ./sentinex-test
 
 Run the reference CLI executable:
 
-    ./srtl-cli
+    ./sentinex-cli
 
-## Status
-
-STRL is an active, early-stage open-source project.
-
-Initial development focuses on:
-
-- Deterministic replay
-
-- Explicit time modeling
-
-- Minimal, inspectable dataflow execution
-
-Interfaces and APIs should be considered experimental at this stage.
 
 # Contributors
 
